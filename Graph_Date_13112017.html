@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>D3 Tutorial 13 11 2017</title>
+</head>
+<style type="text/css">
+    #myText{                /*# is used for id*/
+        text-align: center; /*align text*/
+        color: teal;        /*For color*/
+        font-family: Tahoma;
+        font-size: 66px;
+    }
+
+    .text-beautify{  /* . dot is used for class*/
+
+    }
+
+    #image{
+        visibility: hidden;
+    }
+</style>
+<script type="text/javascript">
+    /*Two way to create function
+        1. var functionname = function() {//code}
+        2. functionname(){//code}
+
+        Note : if there any error check browser console
+    */
+    var show = function(){
+        var txt = document.getElementById("myText");
+        img = document.getElementById("image");
+        txt.innerHTML = "Bye Bye bro !";
+        img.style.visibility = "visible";
+    }
+
+counter=50;
+
+var circle_animation = function(){
+    /*
+    for (i = 0; i < 500; i++){
+        circle.setAttribute("cx", i);
+        setTimeout(10000);
+    }
+    */
+    setTimeout(function(){ alert("Hello"); }, 3000);
+
+    for(i = 0; i < 500; i++){
+    setTimeout(circleFun(), 3000);
+    setTimeout(function(){ }, 3000);
+    }
+    }
+    var circleFun = function(){
+            //alert("Hello");
+            counter = counter + 1;
+            document.getElementById("circle1").setAttribute("cx",counter);
+        }
+
+/*
+    for (i = 0; i < 500; i++){
+        document.getElementById("circle").setAttribute("cx", "100");
+        setTimeout(1000);
+    }
+    */
+</script>
+<body>
+        <p onclick="show()" id="myText">Hello World</p>
+        <p class="text-beautify">My First Web Page !</p>
+        <img src="imageFile.jpg" id="image"/>
+
+        <p>SVG - Support Vector Graphics</p>
+        <!-- W3School example -->
+        <svg width="100" height="100">
+              <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" />
+        </svg>
+        </br>
+        <svg width="500" height="500">
+            <circle id="circle1" cx="60" cy="80" r="50" stroke="red" stroke-width="5" fill="blue"></circle>
+            <circle cx="250" cy="250" r="50" stroke="red" stroke-width="5" fill="blue"></circle>
+        </svg>
+        </br>
+
+        <BUTTON onclick="circle_animation()">
+            Click
+        </BUTTON>
+</body>
+</html>
