@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>D3 14/11/2017</title>
+    <script type="text/javascript" src="https://d3js.org/d3.v3.js"></script>
+
+</head>
+<body>
+        <script type="text/javascript">
+        var svg_circle = d3.select("body").append("svg").attr({
+            "width":450,
+            "height":400
+        });
+
+        svg_circle.append("circle").attr({
+            "r":"30px",
+            "cx":"50px",
+            "cy":"50px",
+            "fill":"red"
+        });
+
+        var svg_bar = d3.select("body").append("svg").attr({
+            "width":500,
+            "height":500
+        });
+        svg_bar.append("rect").attr({
+            "x":"30px",
+            "y":"30px",
+            "width":"30px",
+            "height":"100px"
+        });
+
+        data_values = [5,10,4,55,98,20,36];
+        svg_bar_data = d3.select("body").append("svg").attr({
+            "height":550,
+            "width":550,
+            "id":"svg_data"
+        });
+
+        var bar_data = svg_bar_data.selectAll("rect").data(data_values).enter().append("rect").attr({
+            "id":"bar_chart",
+            "x":function(d,i){
+                return i*30;
+            },
+            "y":"2px",
+            "width":"25px",
+            "height":function(d){
+                return d;
+            }
+        });
+        //For scaling height
+        bar_data.attr("height",function(d){
+            return d * 5;
+        })
+        //(x,y) cotrols the starting position of rectangle.
+        var x = d3.select("rect").attr("height");
+        alert(x);
+        var temp = d3.selectAll("svg#svg_data");
+        for(i = 0 ;i < 3;i++){
+            console.log(temp.attr("id"));
+        }
+
+        bar_data.attr("y", function(d){
+            //var temp = d3.select("body");
+            if(d3.select("body").attr("id") == "svg_data"){
+                var temp = d3.select(this);
+                alert("height");
+            }
+            //alert(d3.select("rect").attr("height"));
+            return Number(d3.select("svg#svg_data").attr("height")) - d * 5;
+
+            //if(d3.select("rect").attr("id") == "bar_chart"){
+            //    return
+            //}
+          //  return d3.select(svg_bar_data).attr("height") - d3.select(bar_data).attr("height");
+        });
+
+        </script>
+</body>
+</html>

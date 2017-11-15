@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+        <script type="text/javascript" src="https://d3js.org/d3.v3.js"></script>
+    <style type="text/css">
+        .axis path,.axis line{
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
+
+        .x.axis path{
+            display: none;
+        }
+
+        body{
+            font: 10px arial;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<script type="text/javascript">
+    var margin={
+        top:20,
+        right:30,
+        bottom:30,
+        left:40
+    };
+
+    var width = 800 - margin.left - margin.right;
+    var height = 400 - margin.top - margin.bottom;
+
+    var formatPercent = d3.format("%.0");
+
+    var yScale = d3.scale.linear().range([height,0]);
+    var xScale = d3.scale.ordinal().rangeRoundBands([0,width],0.1,0.2);
+
+    var c10 = d3.scale.category10();
+
+    var svg = d3.select("body")
+        .append("svg")
+        .attr({
+        "width":width+margin.left+margin.right,
+        "height":height+margin.top+margin.bottom
+        })
+        .append("g")
+        .attr("transform","translate("+margin.left+","+margin.right+")");
+    console.log(d3.select("svg").attr("height"));
+    console.log(d3.select("svg").attr("width"));
+
+    d3.tsv("http://simplysanad.com/d3js/words.tsv",function(data){
+
+        yScale.domain([0,d3.max(data, function(d){
+            return d.frequency;
+        })]);
+
+        xScale.domain(data.map(function(d){
+            return d.letter
+        }));
+
+        var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+
+        var yAxis = d3.svg.axis().scale(yScale).orient("left")
+            .tickFormat(formatPercent)
+
+        var bars = svg.selectAll("rect")
+                .data(data)
+                .enter()
+                .append("rect")
+                .attr({
+                    "class":"bar",
+                    "width":xScale.rangeBand(),
+                    "fill":"steelblue",
+                    "fill":function(d,i){
+                        return c10(Math.random()*10*i);
+                    },
+                    "y": function(d){
+                        return yScale(d.frequency);
+                    },
+                    "x": function(d){
+                        return xScale(d.letter);
+                    },
+                    "height": function(d){
+                        return height - yScale(d.frequency)
+                    }
+
+                });
+        //X-axis and Y-axis
+
+        svg.append("g")
+        .attr("transform","translate(0,"+height+")")
+        .call(xAxis)
+        .attr("class","x axis");
+
+        svg.append("g")
+        .call(yAxis)
+        .attr("class","y axis");
+    });
+</script>
+</body>
+</html>

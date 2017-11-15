@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>D3 Scale 15 11 2017</title>
+     <script type="text/javascript" src="https://d3js.org/d3.v3.js"></script>
+</head>
+<body>
+
+<script type="text/javascript">
+    //Continuous scale
+    //linear, power, log, idetity, time,sequatial color
+    /*
+        1. Linear Scale
+        Given a value from the domain, returns the corresponding value from the range.
+    */
+
+    //Here Input is Numeric and Output is Numeric
+    var x = d3.scale.linear().domain([10,130]).range([0,960]);
+    console.log(x(20));
+    console.log(x(50));
+
+    // Color
+    //Here input is Numeric and Output is Color
+    var color = d3.scale.linear().domain([10,100]).range(["brown","steelblue"]);
+
+    d3.select("body").append("svg").attr({
+        "height":500,
+        "width":500
+    });
+    d3.select("svg").append("rect").attr({
+        "x":10,
+        "y":10,
+        "height":80,
+        "width":25,
+        "fill":color(20)
+    });
+    d3.select("svg").append("rect").attr({
+        "x":40,
+        "y":10,
+        "height":100,
+        "width":25,
+        fill:color(100)
+    });
+
+    //Invert function
+    //Given value from range, returns the correspoding value from the domain
+    var x = d3.scale.linear().domain([10,130]).range([0,960]);
+    console.log(x.invert(20));
+    console.log(x.invert(50));
+
+    //color example 2
+    var color = d3.scale.linear().domain([-1, 0, 1]).range(["red", "white", "green"]);
+    console.log(color(-0.5));
+    console.log(color(0.5));
+
+    //Time Scalling
+    var x = d3.time.scale().domain([new Date(2000, 0, 1), new Date(2000, 0, 2)]).range([0, 960]);
+    console.log(x(new Date(2000, 0, 1, 5)));
+
+    //ordinal scale
+    var x = d3.scale.ordinal().domain(["A","B","C"]).range([1,2,3]);
+    console.log(x("A"));
+    console.log(x("C"));
+    //Here input is A o/p is 1
+    var x = d3.scale.ordinal().domain(["A","B","C"]).rangeRoundBands([0,10], .1);
+    var f = d3.format(".2f");
+    console.log(f(x("C")));
+    var c10 = d3.scale.category10();
+
+    var color_data = [];
+
+    for(i = 0; i < 10; i++){
+        //console.log(c10(i));
+        color_data.push(c10(i));
+    }
+    console.log(color_data);
+    /*for(i = 0; i < c10.length; i++){
+        console.log(c10(i));
+    }*/
+
+    var svg = d3.select("body").append("svg").attr({
+        "id":"colorBar",
+        "height":500,
+        "width":500
+    });
+
+
+    for(var i = 0;i < color_data.length; i++){
+        var temp = Math.floor(Math.random() * (450 - 10)) + 10;
+        svg.append("rect")
+            .attr("x", i * 30)
+            .attr("y", 500 - temp)
+            .attr("height", temp)
+            .attr("width",25)
+            .attr("fill",color_data[i]);
+        }
+
+for (var j = 1; j <= 50; j++) {
+    var tick = function(j) {
+        return function() {
+            svg.selectAll("rect").remove();
+            d3.selectAll("p").remove();
+            for(var i = 0;i < color_data.length; i++){
+            var temp = Math.floor(Math.random() * (450 - 10)) + 10;
+            svg.append("rect")
+                .attr("x", i * 30)
+                .attr("y", 500 - temp)
+                .attr("height", temp)
+                .attr("width",25)
+                .attr("fill",color_data[Math.floor(Math.random() * (9 - 0)) + 0]);
+            }
+            d3.select("body").append("p").text("Iteration Number is : "+(j)).style({
+                "color":color_data[Math.floor(Math.random() * (9 - 0)) + 0]
+            });
+          }
+        };
+    setTimeout(tick(j), 500 * j);
+    }
+
+
+/*
+    svg.selectAll("rect").data(color_data).enter().append("rect")
+    .attr(
+        "x", function(d,i){
+            return i * 30;
+        })
+    .attr("y", 10)
+    .attr("height",function(d){
+         return 500 - Math.floor(Math.random() * (450 - 10)) + 10 ;
+    } )
+    .attr("width",25)
+    .attr("fill", function(d){
+            return d;
+        });
+
+/*    svg.data(color_data).enter().append("rect")
+    .attr(
+        "x", function(d,i){
+            return i * 30;
+        })
+    .attr("y", 10)
+    .attr("height", getRandomInt(10, 450))
+    .attr("width",25)
+    .attr("fill", function(d){
+            return d;
+        }); */
+
+    function getRandomInt(min, max){
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min)) + min;
+    }
+
+    var svg_new= d3.select("body").append("svg").attr({
+        "id":"svgColorAdv",
+        "height":500,
+        "width":500
+    });
+
+    height_array = [];
+
+    for (var i = 0; i < color_data.length;i++){
+        height_array.push(Math.floor(Math.random() * (450 - 10)) + 10);
+    }
+
+    temp_y = 0;
+
+    for (var j = 1; j <= 5; j++) {
+    var tick = function(j) {
+        return function() {
+            svg_new.selectAll("rect").remove();
+            //d3.selectAll("p").remove();
+            for(var i = 0;i < color_data.length; i++){
+            //var temp = Math.floor(Math.random() * (450 - 10)) + 10;
+
+            svg_new.append("rect")
+                .attr("x", i * 30)
+                .attr("y", j == 5 ? temp_y - height_array[i] : temp_y)
+                .attr("height", j != 5 ? height_array[i] / j : height_array[i])
+                .attr("width",25)
+                .attr("fill",color_data[Math.floor(Math.random() * (9 - 0)) + 0]);
+            }
+                        temp_y = temp_y + 100;
+          }
+        };
+    setTimeout(tick(j), 500 * j);
+    }
+
+
+    </script>
+</body>
+</html>

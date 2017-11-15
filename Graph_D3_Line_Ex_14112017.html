@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>D3 Line Chart</title>
+
+    <style type="text/css">
+        body{
+            font:Arial 18px;
+            text-align: center;
+        }
+
+        path{
+            stroke: steelblue;
+            fill:none;
+            stroke-width:2;
+        }
+
+        .axis path, .axis line{
+            fill: none;
+            stroke: grey;
+            stroke-width: 1;
+            shape-rendering: crispEdges;
+        }
+    </style>
+    <script type="text/javascript" src="https://d3js.org/d3.v3.js"></script>
+
+</head>
+<body>
+
+<script type="text/javascript">
+    var margin = {
+        top: 20,
+        bottom: 50,
+        right: 30,
+        left: 50
+    };
+
+    var width = 960 - margin.left - margin.right;
+    var height = 500 - margin.top - margin.bottom;
+
+    var xScale = d3.time.scale().range([0,width]);
+    var yScale = d3.scale.linear().range([height,0]);
+
+
+    console.log(xScale(1));
+
+    var xAxis = d3.svg.axis().scale(xScale)
+                .orient("bottom")
+                .ticks(5);
+
+    var yAxis = d3.svg.axis().scale(yScale)
+                .orient("left")
+                .ticks(10);
+
+/*    var valueLine = d3.svg.area(
+            .x(function(d){
+                console.log(xScale(d.date));
+                return xScale(d.date);
+            })
+            .y1(function(d){
+                console.log(yScale(d.close));
+                return yScale(d.close);
+            })); */
+
+        var area = d3.svg.area()
+                .x(function(d){
+                    return xScale(d.date);
+                })
+                .y1(function(d){
+                    return yScale(d.close);
+                });
+
+    var svgElemet = d3.select("body").append("svg").attr({
+        "width":width+margin.left+margin.right,
+        "height":height+margin.top+margin.bottom
+    })
+        .append("g")
+        .attr({
+            "transform":"translate("+margin.left+","+margin.right+")"
+        });
+
+    //Data Preprocessing
+    var ParseDate = d3.time.format("%d-%b-%y").parse;
+        d3.tsv("http://simplysanad.com/d3js/data.tsv", function(error, data){
+
+            data.forEach(function(d){
+                d.date = ParseDate(d.date);
+                d.close = +d.close;
+            });
+        //console.table(data);
+
+    //console.table(tempData);
+
+
+        xScale.domain(d3.extent(data, function(d){
+            return d.date;
+        }));
+
+        yScale.domain([0, d3.max(data, function(d){
+            return d.close;
+        })]);
+            area.y0(yScale(0));
+
+
+        var path = svgElemet.append("path")
+            .attr("d",area(data))
+            .attr("fill","steelblue");
+
+        var x = svgElemet.append("g")
+        .attr("transform","translate(0,"+height+")")
+        .attr("class","x axis")
+        .call(xAxis);
+
+        var y = svgElemet.append("g")
+        .attr("class","y axis")
+        .call(yAxis);
+
+        y.append("text").text("Price ($)").attr({
+            "fill":"#000",
+            "transform":"rotate(-90)",
+            "dy":"0.71em",
+            "y":"6",
+            "text-anchor":"end",
+            "font-size":"20px"
+        });
+
+        x.append("text").text("Year").attr({
+            "x":width-25,
+            "font-size":"20px"
+        });
+       /* y.append("text").attr({
+            "fill":"#000",
+            "transform":"rotate(-90)",
+            "y":6,
+            "dy":"0.71em",
+            "text-anchor":"end",
+        })
+        .text("Price ($)");*/
+        });
+</script>
+
+</body>
+</html>

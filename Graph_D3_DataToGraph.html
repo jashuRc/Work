@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script type="text/javascript" src="https://d3js.org/d3.v3.js"></script>
+</head>
+<body>
+
+<script type="text/javascript">
+
+//to load tab saperated values (TSV)
+    d3.tsv("http://simplysanad.com/d3js/data.tsv", function(error, data){
+        if(error){
+            console.log(error);
+        }
+        else{
+            console.table(data);
+        }
+//        alert("Hello");
+    });
+
+    //Data Preprocessing
+    var ParseDate = d3.time.format("%d-%b-%y").parse;
+    d3.tsv("http://simplysanad.com/d3js/data.tsv", function(error, data){
+            data.forEach(function(d){
+                d.date = ParseDate(d.date);
+                d.close = +d.close;
+            })
+        console.table(data);
+    });
+
+    var svgElement = d3.select("body")
+    .append("svg")
+    .attr({
+        "width":500,
+        "height":500
+    });
+
+    //var xScale = d3.scale.linear().domain([0,50]).range([10,400]);
+    //var yScale = d3.scale.linear().domain([0,50]).range([10,400]);
+    //line generator
+
+    var valueline = d3.svg.line()
+    .x(function(d){
+        return xScale(d.date);
+    })
+    .y(function(d){
+        return yScale(d.close);
+    });
+
+    alert("height");
+</script>
+
+</body>
+</html>

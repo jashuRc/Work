@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script type="text/javascript" src="https://d3js.org/d3.v3.js"></script>
+     <style>
+            body{ font: Arial 12px; text-align: center;}
+            .axis path, .axis line{
+                fill: none;
+                stroke: black;
+                stroke-width: 1;
+                shape-rendering: crispEdges;
+            }
+        </style>
+</head>
+<body>
+<script type="text/javascript">
+    var margin = {
+        top: 20,
+        bottom: 50,
+        right: 30,
+        left: 50
+    };
+
+    var width = 960 - margin.left - margin.right;
+    var height = 500 - margin.top - margin.bottom;
+
+    //Time data conversion(Parser)
+    var ParseDate = d3.time.format("%d-%b-%y").parse;
+
+    //X and Y Scale to scale inputs
+    var xScale = d3.time.scale().range([0, width]);
+    var yScale = d3.scale.linear().range([height, 0]);
+
+    //creating axes
+    var xAxis = d3.svg.axis().scale(xScale)
+        .orient("bottom")
+        .ticks(5);
+    var yAxis = d3.svg.axis().scale(yScale)
+        .orient("left");
+
+    //create a area generator
+    var area = d3.svg.area()
+            .x(function(d){
+                return xScale(d.date);
+            })
+            .y(function(d){
+                return yScale(d.close);
+            });
+
+    var svgElement = d3.select("body")
+                .append("svg")
+                .attr({
+                    "width":width+margin.left+margin.right,
+                    "height":height+margin.bottom+
+                        margin.top
+                })
+                .append("g")
+        .attr("transform","translate("+margin.left+","+margin.top+")");
+
+
+    d3.tsv("http://simplysanad.com/d3js/data.tsv",
+        function(data){
+        data.forEach(function(d){
+            d.date = ParseDate(d.date);
+            d.close = +d.close;
+        });
+        xScale.domain(d3.extent(data,function(d){
+            return d.date;
+        }));
+
+        yScale.domain([0, d3.max(data, function(d){
+            return d.close;
+        })]);
+
+        area.y0(yScale(0));
+
+        var path = svgElement.append("path")
+        .attr("d",area(data))
+        .attr("fill","steelblue");
+
+        var x = svgElement.append("g")
+        .attr("transform", "translate(0,"+height+")")
+        .attr("class","x axis")
+        .call(xAxis);
+
+        var y = svgElement.append("g")
+        .call(yAxis)
+        .attr("class","y axis");
+
+    });
+</script>
+</body>
+</html>

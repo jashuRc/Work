@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>D3 Format 15 11 2017</title>
+    <script type="text/javascript" src="https://d3js.org/d3.v3.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+    for(var i = 0; i < 10; i++){
+        console.log(0.1 * i);
+    }
+
+    var f = d3.format("0.2f");
+    for (var i = 0; i < 10; i++){
+        console.log(f(111.6 * i));
+    }
+
+    //Different Format using D3
+
+    console.log(d3.format(".0%")(0.123));
+     // rounded percentage
+    console.log(d3.format("$.2f")(-3.5));
+     // currency
+    console.log(d3.format("+20")(42));
+     //+20 space is added before 42
+     console.log(d3.format(".^20")(42));
+     // output is ......42...... space filled with dot
+     console.log(d3.format(".2s")(42e3));
+     // here e3 is kilo
+     //      e6 for mega
+     console.log(d3.format("#x")(48879));
+     // hexadecimal conversion
+     console.log(d3.format(",.2r")(4223));
+     //grouped thousand o/p is 4200
+</script>
+</body>
+</html>

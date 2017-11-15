@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>D3 14/11/2017</title>
+    <script type="text/javascript" src="https://d3js.org/d3.v3.js"></script>
+
+<!---
+    <script type="text/javascript">
+        d3.select("body").append("p").text("Our First Paragraph using D3!");
+    </script>
+    //Write this code inside the body tag or at the end of html
+-->
+</head>
+<body>
+        <script type="text/javascript">
+        //d3.select("body").append("p").text("Our First Paragraph using D3!");
+        //method chaining
+
+        //var p = d3.select("body").append("p").text("Second Paragraph with css");
+        //p.style({"font-size":"40px"});
+
+        var data_values = [5,10,15,12,55];
+        var p = d3.selectAll("p").data(data_values).enter().append("p").text("Hello World");
+        p.style({"font-size":"15px"});
+        p.text(function(value){ return value; });
+        //d3.select("p").data(data_values).enter().text(function(value){ return value; });
+        </script>
+</body>
+</html>

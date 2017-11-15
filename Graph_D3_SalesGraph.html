@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sales</title>
+        <script type="text/javascript" src="https://d3js.org/d3.v3.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+var margin={
+    top:20,
+    right:20,
+    bottom:30,
+    left:30
+};
+
+height = 400 - margin.top -margin.bottom;
+width = 800 - margin.left - margin.right;
+
+var svg = d3.select("body").append("svg")
+        .attr({
+            "class":"svg",
+            "height":height + margin.top + margin.bottom,
+            "width":width + margin.left + margin.right
+        })
+        .append("g")
+        .attr("transform","translate("+margin.left+","+margin.right+")");
+
+        xScale = d3.scale.ordinal().rangeRoundBands([0, width], 0.1, 0.2);
+        yScale = d3.scale.linear().range([height, 0]);
+
+productCode = [];
+salesUnit = [];
+tempArray = [];
+d3.csv("Sales_Transactions_Dataset_Weekly.csv", function(sales_data){
+        /*
+        sales_data.forEach(function(d){
+            //console.log(d.Product_Code);
+            productCode.push(d.Product_Code);
+
+            console.log(d.TotalSale);
+
+            salesUnit.append(d.TotalSale);
+            /*
+            for (var i = 0;i < 53;i++){
+                //tempArray.push();
+                totalUnit = totalUnit + parseInt(String(eval("d.W"+i)));
+            }
+            console.log(totalUnit);*/
+        //});
+/*        for(var i = 0; i < 10; i++){
+            salesUnit.push(sales_data.TotalSale[i]);
+            productCode.push(sales_data.Product_Code[i]);
+        }
+*/
+
+    sales_data.forEach(function(d){
+        console.log(d.Product_Code);
+        console.log(d.TotalSale);
+        //salesUnit.push(Number(String(sales_data.TotalSale)));
+        //productCode.push(Number(String(sales_data.Product_Code)));
+    });
+
+        xScale.domain(sales_data.map(function(d){
+            return d.Product_Code
+        }));
+        yScale.domain([0, d3.max(sales_data, function(d){
+            return d.TotalSale;
+        })]);
+
+        var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+        var yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+
+
+        var bar_ = svg.selectAll("rect")
+                .data(sales_data)
+                .enter()
+                .append("rect")
+                .attr({
+                    "x":function(d){
+                        return xScale(d.Product_Code);
+                    },
+                    "y":function(d,i){
+                        return d3.format(".2f")(yScale(d.TotalSale));
+                    },
+                    "height":function(d,i){
+                        return height - d3.format(".2f")(yScale(d.TotalSale));
+                    },
+                    "width":xScale.rangeBand(),
+                    "fill":"steelblue",
+                    "calss":"bar"
+                });
+
+        svg.append("g")
+        .attr("transform","translate(0,"+height+")")
+        .call(xAxis)
+        .attr("class","x axis");
+
+        svg.append("g")
+        .call(yAxis)
+        .attr("class","y axis");
+
+        max = d3.max(sales_data,function(d){return d.TotalSale; });
+        min = d3.min(sales_data,function(d){return d.TotalSale; });
+
+
+
+        bar_.filter(function(d){ return d.TotalSale == max; }).attr("fill","green");
+        bar_.filter(function(d){ return d.TotalSale == min; }).attr("fill","red");
+        console.log(max);
+        console.log(min);
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>D3 Data</title>
+    <script type="text/javascript" src="https://d3js.org/d3.v3.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+
+    //setting margin
+    var margin={
+        top:20,
+        right:30,
+        bottom:30,
+        left:20
+    };
+
+
+    height = 400 - margin.top -margin.bottom;
+    width = 800 - margin.left - margin.right;
+
+    //create svg
+    var svg = d3.select("body").append("svg").attr({
+        "width":width + margin.top + margin.bottom,
+        "height":height + margin.left + margin.right,
+    })
+    .append("g")
+    .attr("transform","translate("+margin.left+","+margin.right+")");
+
+    console.log(d3.selectAll("g").attr("transform"));
+
+        //creating scale
+        //xscale for letter "A","B",... here setting range
+            xScale = d3.scale.ordinal().rangeRoundBands([0,width], 0.1, 0.2);
+        //yscale for number 1,2,3....
+            yScale = d3.scale.linear().range([height, 0]);
+
+    var c10 = d3.scale.category10();
+
+
+    d3.tsv("http://simplysanad.com/d3js/words.tsv",function(data){
+        data.forEach(function(d){
+            //console.log(d.letter);
+            //console.log(d3.format("%.0")(d.frequency));
+
+            //yScale.domain([])
+        });
+        console.log(d3.max(data));
+        console.log(d3.max(data, function(d){
+            return d.frequency;
+        }));
+
+            //setting domain
+        yScale.domain([0, d3.max(data, function(d){
+            return d.frequency;
+        })])
+
+        console.log(data.map(function(d){
+            return d.letter;
+        }))
+
+        xScale.domain(data.map(function(d){
+            return d.letter;
+        }))
+
+            //creating x axis and y axis
+
+        var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+        var yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+        //creating rect as bar chart
+
+        var bar_chart = svg.selectAll("rect")
+                        .data(data)
+                        .enter()
+                        .append("rect")
+                        .attr({
+                            "x": function(d,i){
+                                return xScale(d.letter);
+                            },
+                            "y": function(d,i){
+                                return yScale(d.frequency);
+                            },
+                            "height": function(d){
+                                return height - yScale(d.frequency);
+                            },
+                            "width": xScale.rangeBand(),
+                            "fill":"steelblue",
+                            "class":"bar"
+                        });
+            console.log(xScale.rangeBand());
+
+            //add x axis and y axis
+            svg.append("g")
+                    .attr("transform","translate(0,"+height+")")
+                    .call(xAxis)
+                    .attr("class","x axis");
+            console.log(xAxis(100));
+            svg.append("g")
+                    .call(yAxis)
+                    .attr("class","y axis");
+
+//            console.log("Hello");
+
+    });
+</script>
+</body>
+</html>

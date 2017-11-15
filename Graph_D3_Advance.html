@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>D3 Tutorial 14/11/2017</title>
+    <script type="text/javascript" src="https://d3js.org/d3.v3.js"></script>
+</head>
+<style type="text/css">
+    path{
+        stroke: steelblue;
+        fill:none;
+        stroke-width:2;
+    }
+</style>
+<body>
+    <script type="text/javascript">
+        data_values=[10,12,44,67,34,23,10,99,79];
+
+        var max = d3.max(data_values);
+        var min = d3.min(data_values);
+
+
+
+
+        var min = d3.min(data_values);
+        alert(min);
+        var svg = d3.select("body").append("svg");
+        svg.attr({
+            "height":500,
+            "width":500,
+            "id":"svg"
+        });
+
+        //linear scale
+        /*
+        var normalize = d3.scale.linear().domain([0,d3.select("svg#svg").attr("height")]).range([0,max]);
+
+        for(i = 0 ; i<data_values.length;i++){
+          data_values[i] = normalize(data_values[i]);
+        }*/
+
+        bar = svg.selectAll("rect")
+        .data(data_values)
+        .enter()
+        .append("rect")
+        .attr({
+            "y":"25px",
+            "width":"25px",
+            "height": function(d){
+                return d * 4;
+            },
+            "x":function(d,i){
+                return i*30;
+            }
+        });
+
+        bar.filter(function(d){
+            return d == max;
+        }).attr({
+            "fill":"green"
+        })
+
+        bar.filter(function(d){
+            return d == min;
+        }).attr({
+            "fill":"red"
+        });
+
+        bar.attr({
+            "y":function(d){
+                return d3.select("svg#svg").attr("height") - d * 4;
+            }
+        })
+
+
+        //axis code
+        var svgElement = d3.select("body")
+            .append("svg")
+            .attr({
+                "width":500,
+                "height":500
+            })
+        var xScale = d3.scale.linear().domain([0,50]).range([10,400]);
+
+        var xAxis = d3.svg.axis().scale(xScale)
+            .ticks(10)
+            .orient("bottom");
+
+
+        var x = svgElement.append("g").call(xAxis);
+        //var x = svgElement.append("g").call(xAxis);
+    </script>
+</body>
+</html>
