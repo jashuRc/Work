@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GOT</title>
+    <script type="text/javascript" src="https://d3js.org/d3.v3.js"></script>
+</head>
+<style type="text/css">
+    body{
+        font: Arial 12px;
+        text-align: center;
+    }
+    .link{
+        stroke: #ccc;
+    }
+    .node text{
+        pointer-events: none;
+        font:sans-serif;
+    }
+</style>
+<body>
+
+<script type="text/javascript">
+
+var margin={
+    top:20,
+    bottom:30,
+    left:50,
+    right:30
+};
+
+var width = 960 - margin.left - margin.right;
+var height = 700 - margin.top - margin.bottom;
+
+var c10 = d3.scale.category10();
+
+var svg = d3.select("body")
+            .append("svg")
+            .attr({
+                "width":width+margin.left+margin.right,
+                "height":height+margin.top+margin.bottom
+            })
+            .append("g")
+            .attr("transform","translate("+margin.left+","+margin.top+")");
+
+    d3.json("http://simplysanad.com/d3js/got_social_graph.json", function(data){
+        var nodes = data.nodes,
+        links = data.links;
+
+        var force = d3.layout.force()
+                    .size([width, height])
+                    .nodes(nodes)
+                    .links(links)
+                    .gravity(0.05)
+                    .charge(-200)
+                    .linkDistance(200);
+
+        var link = svg.selectAll(".link")
+                    .data(links)
+                    .enter()
+                    .append("line")
+                    .attr("stroke-width", function(d){
+                        return parseInt(d.weight/10);
+                    })
+                    .attr("fill","steelblue")
+                    .attr("class","link");
+
+        var node = svg.selectAll(".node")
+                    .data(nodes)
+                    .enter()
+                    .append("g")
+                    .attr("class","node")
+                    .call(force.drag);
+
+        var label = node.append("text")
+                    .attr("dx",12)
+                    .attr("dy","0.35em")
+                    .attr("font-size",function(d){
+                        return d.influence*1.5>9 ? d.influence*1.5 : 9;
+                    })
+                    .text(function(d){
+                        return d.character;
+                    });
+
+        var circle = node.append("circle")
+                    .attr("r",function(d){
+                        return d.influence/2 > 5 ? d.influence/2 : 5;
+                    })
+                    .attr("fill",function(d){
+                        return c10(d.zone*10);
+                    });
+
+        force.on("tick", function(){
+            node.attr("r",function(d){
+                return d.influence;
+            })
+        .attr("cx",function(d){ return d.x; })
+        .attr("cy",function(d){ return d.y; });
+
+link.attr({
+    "x1":function(d){ return d.source.x; },
+    "y1":function(d){ return d.source.y; },
+    "x2":function(d){ return d.target.x; },
+    "y2":function(d){ return d.target.y; }
+        });
+
+node.attr("transform", function(d){
+    return "translate ("+d.x+","+d.y+")"
+});
+});
+force.start();
+    });
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Area Chart</title>
+    <script type="text/javascript" src="https://d3js.org/d3.v3.js"></script>
+<style type="text/css">
+    path{
+        stroke: steelblue;
+        fill: none;
+        stroke-width:2;
+    }
+</style>
+</head>
+<body>
+
+<script type="text/javascript">
+var ParseDate = d3.time.format("%d-%b-%y").parse;
+
+var margin={
+    top:20,
+    right:20,
+    left:30,
+    bottom:30
+};
+
+    height = 500 - margin.top - margin.bottom;
+    width = 700 - margin.left - margin.right;
+
+    var xScale = d3.time.scale().range([0, width]);
+    var yScale = d3.scale.linear().range([height,0]);
+
+    var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(5);
+    var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5);
+
+    //line generator
+
+    var valueLine = d3.svg.line()
+            .x(function(d){
+                return xScale(d.date);
+            })
+            .y(function(d){
+                return yScale(d.close);
+            });
+
+
+
+
+
+    var svg = d3.select("body").append("svg")
+                .attr({
+                    "class":"svg",
+                    "height":height+margin.top+margin.bottom,
+                    "width":width+margin.left+margin.right
+                })
+                .append("g")
+                .attr("transform","translate("+margin.left+","+margin.right+")");
+
+    d3.tsv("http://simplysanad.com/d3js/data.tsv", function(data){
+        data.forEach(function(d){
+            d.date = ParseDate(d.date);
+            d.close = +d.close;
+            console.log(d.date+" "+d.close);
+        });
+        console.log(d3.extent(data, function(d){ return d.date; }));
+        console.log(d3.max(data, function(d){ return d.close; }));
+
+        xScale.domain(d3.extent(data, function(d){ return d.date; }));
+        yScale.domain([0,d3.max(data, function(d){ return d.close; })]);
+
+        console.log(valueLine(data));
+
+/*        data.forEach(function(d1){
+            console.log(d3.svg.line()
+                .x(function(d){
+                    return xScale(d.date); })
+                .y(function(d){
+                    return yScale(d.close); })
+                );
+
+
+            svg.append("path").attr("d",d3.svg.line().x(xScale(d.date)).y(yScale(d.close)));
+        });
+*/        var path = svg.append("path").attr("d",valueLine(data));
+
+
+
+        var x = svg.append("g")
+                .attr("transform","translate(0,"+height+")")
+                .call(xAxis)
+                .attr("class","x axis");
+
+        var y = svg.append("g")
+                .call(yAxis)
+                .attr("class","y axis");
+    });
+</script>
+
+</body>
+</html>
