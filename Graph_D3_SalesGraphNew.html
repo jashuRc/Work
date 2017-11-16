@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script type="text/javascript" src="https://d3js.org/d3.v3.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+
+function Create2DArray(rows) {
+  var arr = [];
+
+  for (var i=0;i<rows;i++) {
+     arr[i] = [];
+  }
+
+  return arr;
+}
+
+/*weekObjectArray = [];
+
+for(i = 0;i < 10;i++){
+    for(j=0;j<10;j++){
+        weekObjectArray.push([i]);
+    }
+}
+
+console.log(weekObjectArray);
+*/
+var arr = Create2DArray(11);
+var i = 0;
+//var productCode = ["P1","P2","P3","P4","P5","P6","P7","P8","P9","P10"];
+var productCode=[];
+
+d3.csv("Sales_data.csv",function(data){
+    data.forEach(function(d){
+
+//            temp = d.Product_Code;
+            productCode.push(d.Product_Code);
+
+            for(j=0;j<11;j++){
+                arr[i][j] = +eval("d.W"+j);
+            }
+            i = i + 1;
+
+    });
+console.log(arr);
+console.log(productCode);
+
+d3.select("body").append("p").text("Select Week");
+
+var select = d3.select("body").append("select").attr({
+    "id":"Week"
+})
+select.selectAll("option")
+           .data(productCode)
+           .enter()
+           .append("option")
+           .text(
+                 function(d){
+                    return d;
+                 })
+           .attr("value",function(d) { return d; });
+
+    var margin={
+    top:20,
+    right:20,
+    bottom:30,
+    left:30
+};
+    d3.select("body").append("br");
+
+    height = 400 - margin.top -margin.bottom;
+    width = 800 - margin.left - margin.right;
+
+var svg = d3.select("body").append("svg")
+        .attr({
+            "class":"svg",
+            "height":height + margin.top + margin.bottom,
+            "width":width + margin.left + margin.right
+        })
+        .append("g")
+        .attr("transform","translate("+margin.left+","+margin.right+")");
+
+
+        xScale = d3.scale.ordinal().rangeRoundBands([0, width], 0.1, 0.2);
+        yScale = d3.scale.linear().range([height, 0]);
+
+        console.log(arr[0][]);
+        xScale.domain(productCode);
+        yScale.domain([0, d3.max(arr[0])]);
+
+        var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+        var yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+        var bar = svg.selectAll("rect")
+                    .data(arr[0])
+                    .enter()
+                    .append("rect")
+                    .attr({
+                        "x":function(d,i){
+                            return xScale(productCode[i]);
+                        },
+                        "y":function(d){
+                            return yScale(d);
+                        },
+                        "height":function(d,i){
+                            return height - yScale(d);
+                        },
+                        "width":xScale.rangeBand(),
+                        "fill":"steelblue",
+                        "class":"bar"
+                    });
+});
+
+
+
+
+
+
+</script>
+</body>
+</html>

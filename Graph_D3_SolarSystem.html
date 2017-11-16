@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script type="text/javascript" src="https://d3js.org/d3.v3.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+
+    data_values = [0.5,8,6,5,7,1,2,3,4];
+
+    height = 900;
+    width = 900;
+    var svg = d3.select("body").append("svg")
+                .attr({
+                    "height":height,
+                    "width":width,
+                    "id":"svg"
+                });
+
+
+    radius = [];
+    center_x = [];
+    center_y = [];
+
+
+
+    var circle = svg.selectAll("circle")
+                .data(data_values)
+                .enter()
+                .append("circle")
+                .attr({
+                    "r":
+                    function(d,i){
+                        return (1/d)*40;
+                    },
+                    "id":
+                    function(d,i){
+                        return "d"+i;
+                    },
+                    "cx":
+                    function(d,i){
+                        cx = height/(i+2);
+                        if(i % 2 == 0){
+                        center_x.push(cx);
+                        return cx;
+                        }
+                        else{
+                        center_x.push(cx);
+                        cx = height - cx;
+                        return cx;
+                        }
+                    },
+                    "cy":
+                    function(d,i){
+                        cy = width/(i+2);
+                        if(i % 2 == 0){
+                        if(i != 0){
+                            temp = Math.sqrt(Math.pow((height/2) - cx,2) + Math.pow((width/2) - cy,2));
+                            radius.push(temp);
+                        }
+                        center_y.push(cy);
+                        return cy;
+                    }
+                    else{
+                        cy = width - cy;
+                        if(i != 0){
+                            temp = Math.sqrt(Math.pow((height/2) - cx,2) + Math.pow((width/2) - cy,2));
+                            radius.push(temp);
+                        }
+                        center_y.push(cy);
+                        return cy;
+                    }
+                    },
+                    "fill":function(d,i){
+                        if(i == 0){
+                            return "yellow";
+                        }
+                    }
+                });
+
+
+
+                console.log(radius);
+                console.log(center_x);
+                console.log(center_y);
+
+counter = 0;
+for (var j = 0; j <= 359; j++) {
+    var tick = function(j) {
+        return function() {
+                            counter = counter + 1;
+                for(var i = 0 ; i < 1;i++){
+                    if(i % 2 == 0){
+                    x = radius[i] * Math.cos(counter) + 450;
+                    y = radius[i] * Math.sin(counter) + 450;
+                }
+                else{
+                    x = radius[i] * Math.cos(180 - counter) + 450;
+                    y = radius[i] * Math.sin(180 - counter) + 450;
+                }
+
+                d3.select("circle#d"+(i+1)).attr({
+                    "cx":x,
+                    "cy":y
+                });
+
+            }
+            }
+        }
+    setTimeout(tick(j), 1000 * j);
+    }
+</script>
+</body>
+</html>
