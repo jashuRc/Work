@@ -148,7 +148,10 @@ d3.csv("Sales_data.csv",function(data){
                         bar.filter(function(d){ return d == min; }).attr("fill","red");
 
             }
+                        window.onload(updateGraph(d3.selectAll("option").attr("value")));
+
     });
+
 </script>
 </body>
 </html>
