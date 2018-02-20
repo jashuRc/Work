@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+        <script type="text/javascript" src="https://d3js.org/d3.v3.js"></script>
+</head>
+<body>
+<p>Select Product</p>
+
+<script type="text/javascript">
+//function to create 2D array
+function Create2DArray(rows) {
+  var arr = [];
+
+  for (var i=0;i<rows;i++) {
+     arr[i] = [];
+  }
+
+  return arr;
+}
+
+var arr = Create2DArray(11); //to store product sale data
+var i = 0;
+var productCode=[];          //to store prodeuct name
+var weekArray=[];            //to store week name
+
+
+
+
+d3.csv("Sales_data.csv",function(data){
+
+   //retrieve the all data from csv file store into array.
+    data.forEach(function(d){
+
+            productCode.push(d.Product_Code);
+
+            for(j=0;j<11;j++){
+                arr[i][j] = +eval("d.W"+j);
+            }
+            i = i + 1;
+
+
+       })
+        for(j=1;j<=11;j++){
+               weekArray.push("Week"+" "+j);
+            }
+        console.log(weekArray);
+        //create drop down menu using D3 and Data
+         var select = d3.select("body")
+               .append("select")
+               .attr("id","productCode")
+               .attr("onchange","updateGraph(value)");
+
+         var options = select.selectAll("option")
+                             .data(productCode)
+                             .enter()
+                             .append("option")
+                             .text(
+                                    function(d){
+                                        return d;
+                                    }
+                                )
+                             .attr("value",function(d){
+                                            return d;
+                             });
+
+
+        d3.select("body").append("br");
+
+        //function to update graph
+        updateGraph  = function(value) {
+
+                    //alert("updateGraph is called"+weekArray.indexOf(value));
+                    d3.selectAll("svg").remove();
+
+                            console.log("hello");
+
+                            //D3 code start
+                            var margin={
+                                        top:20,
+                                        right:20,
+                                        bottom:30,
+                                        left:30
+                                    };
+
+                            height = 400 - margin.top -margin.bottom;
+                            width = 800 - margin.left - margin.right;
+
+                            //SVG here
+                            var svg = d3.select("body").append("svg")
+                            .attr({
+                                "class":"svg",
+                                "height":height + margin.top + margin.bottom,
+                                "width":width + margin.left + margin.right
+                            })
+                            .append("g")
+                            .attr("transform","translate("+margin.left+","+margin.right+")");
+
+                            xScale = d3.scale.ordinal().rangeRoundBands([0, width], 0.1, 0.2);
+                            yScale = d3.scale.linear().range([height, 0]);
+
+                           tempArray = [];
+                            for(i=0;i<11;i++){
+                                tempArray.push(arr[productCode.indexOf(value)][i]);
+                            }
+
+                            xScale.domain(weekArray);
+                            yScale.domain([0, d3.max(tempArray)]);
+
+                            var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+                            var yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+                            var bar = svg.selectAll("rect")
+                                    .data(tempArray)
+                                    .enter()
+                                    .append("rect")
+                                    .attr({
+                                        "x":function(d,i){
+                                            return xScale(weekArray[i]);
+                                        },
+                                        "y":function(d){
+                                            return yScale(d);
+                                        },
+                                        "height":function(d,i){
+                                            return height - yScale(d);
+                                        },
+                                        "width":xScale.rangeBand(),
+                                        "fill":"steelblue",
+                                        "class":"bar"
+                                    });
+
+                         svg.append("g")
+                        .attr("transform","translate(0,"+height+")")
+                        .call(xAxis)
+                        .attr("class","x axis");
+
+                        svg.append("g")
+                        .call(yAxis)
+                        .attr("class","y axis");
+
+                         max = d3.max(tempArray);
+                         min = d3.min(tempArray);
+
+
+                         console.log(max);
+
+                        bar.filter(function(d){ return d == max; }).attr("fill","green");
+                        bar.filter(function(d){ return d == min; }).attr("fill","red");
+
+            }
+                        window.onload(updateGraph(d3.selectAll("option").attr("value")));
+
+    });
+
+</script>
+</body>
+</html>

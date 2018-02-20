@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+</head>
+<body>
+
+<svg width="500" height="500">
+
+<!-- <g id="circle" transform="translate(130,0)">
+</g>
+ -->
+ <circle id="circle1" cx="50" cy="50" r="30" fill="black"></circle>
+<circle id="circle2" cx="150" cy="150" r="30" fill="blue"></circle>
+
+<!-- <g>
+<rect x="180" y="180" height="50" width="50"></rect>
+<rect x="120" y="120" height="50" width="50"></rect>
+</g>
+ -->
+
+</svg>
+
+<script type="text/javascript">
+/*d3.select("g#circle").attr({
+    "transform":"translate(10,10)"
+});
+*/
+
+/*var x1 = +d3.select("circle#circle1").attr("cx");
+var y1 = +d3.select("circle#circle1").attr("cy");
+
+var x2 = +d3.select("circle#circle2").attr("cx");
+var y2 = +d3.select("circle#circle2").attr("cy");*/
+
+x1=0;
+x2=0;
+
+y1=0;
+y2=0;
+
+            cx1 = +d3.select("circle#circle1").attr("cx");
+            cy1 = +d3.select("circle#circle1").attr("cy");
+            cx2 = +d3.select("circle#circle2").attr("cx");
+            cy2 = +d3.select("circle#circle2").attr("cy");
+
+            radius = Math.sqrt(
+                Math.pow((cx1 - cx2),2)
+                + Math.pow((cy1 - cy2),2))/2;
+
+
+for (var j = 0; j <= 359; j++) {
+    var tick = function(j) {
+
+        return function() {
+
+
+
+            console.log(radius);
+
+            x = radius * Math.cos(j) + cx1;
+            y = radius * Math.sin(j) + cy1;
+
+          //  d3.select("circle#circle1").attr({
+         //   "transform":"translate("+x+","+y+")"
+          //  });
+
+
+            x = radius * Math.cos(180 - j) + cx2;
+            y = radius * Math.sin(180 - j) + cy2;
+
+            d3.select("circle#circle2").attr({
+            //"transform":"translate("+x+","+y+")"
+            "cx":x,
+            "cy":y
+            });
+            }
+        }
+    setTimeout(tick(j), 500 * j);
+    }
+</script>
+
+</body>
+</html>
